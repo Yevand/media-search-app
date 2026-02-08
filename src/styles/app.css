@@ -1,0 +1,15 @@
+.page-content {
+  width: var(--min-mobile-width);
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: var(--flex-gap);
+  padding-right: var(--flex-gap);
+}
+
+@media screen and (min-width: 992px) {
+  .page-content {
+    width: 100%;
+    flex-wrap: nowrap;
+    gap: calc(var(--flex-gap) * 5);
+  }
+}
