@@ -1,16 +1,27 @@
 import {Favourites} from '../components/favourites-list';
-import '../styles/app.css';
+import {
+  SectionWrapper,
+  PageWrapper,
+  ContentWrapper,
+  StyledAside,
+} from '../styles/styled-components';
 
 export function Home() {
   return (
-    <div className="page-content">
-      <section>
-        <h2>{'My Favourite stuff'}</h2>
+    <PageWrapper>
+      <ContentWrapper>
+        <SectionWrapper>
+          <StyledAside>
+            <h3>Your digital media collection</h3>
+            <p>
+              Use the search bar to explore millions of tracks and cinematic
+              masterpieces.
+            </p>
+          </StyledAside>
+        </SectionWrapper>
+
         <Favourites />
-      </section>
-      <section>
-        <h2>{'Welcome to home page'}</h2>
-      </section>
-    </div>
+      </ContentWrapper>
+    </PageWrapper>
   );
 }

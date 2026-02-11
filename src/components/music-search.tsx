@@ -1,29 +1,37 @@
-import {useContext, useState, type FormEvent} from 'react';
+import {useContext, useState, type SubmitEvent} from 'react';
 import {DispatchContext} from '../context/dispatch-context';
+import {useQuery} from '@tanstack/react-query';
 import type {Action, Item, MusicSearchResponse, Result} from '../types';
-import '../styles/music-search.css';
+import {
+  InputGroup,
+  SectionWrapper,
+  StyledButton,
+  StyledForm,
+  StyledInput,
+  StyledListItem,
+  StyledSearchButton,
+  StyledUnorderedList,
+  TruncatedText,
+  StyledLoading,
+  StyledErrorBanner,
+} from '../styles/styled-components';
 
-// use library and proccess errors
-export async function getMusic(
+const getMedia = async (
   query: string,
-  limit = 10,
-): Promise<MusicSearchResponse> {
+  limit = 5,
+): Promise<MusicSearchResponse> => {
   const URL = `https://musicbrainz.org/ws/2/recording?fmt=json&limit=${limit}&query=${query}`;
   const response = await fetch(URL);
-
+  if (!response.ok) throw new Error(`Fetch failed, status: ${response.status}`);
   return response.json();
-}
+};
 
 interface ResultListProps {
-  items: Item[];
+  items: Item[] | undefined;
 }
 
 const ResultList = ({items}: ResultListProps) => {
   const dispatch = useContext(DispatchContext);
-
-  if (items.length === 0) {
-    return <ul></ul>;
-  }
 
   function handleAdd(id: Action['id'], item: Item) {
     if (dispatch) {
@@ -35,52 +43,65 @@ const ResultList = ({items}: ResultListProps) => {
     }
   }
 
-  const listItems = items.map((item) => (
-    <li className="result" key={item.id}>
-      {`${item.artist} - ${item.song}`}
-      <button
+  // @TODO add truncation for long text in li
+  const listItems = items?.map((item) => (
+    <StyledListItem key={item.id}>
+      <TruncatedText>{`${item.artist} - ${item.song}`} </TruncatedText>
+      <StyledButton
         type="button"
         onClick={() => {
           handleAdd(item.id, item);
         }}
       >
         Add
-      </button>
-    </li>
+      </StyledButton>
+    </StyledListItem>
   ));
 
-  return <ul className="search-results">{listItems}</ul>;
+  return <StyledUnorderedList>{listItems}</StyledUnorderedList>;
 };
 
-export function MusicSearch() {
-  const [searchResults, setSearchResults] = useState<Item[]>([]);
-  const [query, setQuery] = useState<string>('');
+export const MusicSearch = () => {
+  const [inputValue, setInputValue] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
-  async function searchSubmitHandle(event: FormEvent) {
+  const {data, isLoading, isError, error} = useQuery({
+    queryKey: ['music', searchQuery],
+    queryFn: async () => await getMedia(searchQuery),
+    enabled: !!searchQuery,
+  });
+
+  const searchSubmitHandle = (event: SubmitEvent) => {
     event.preventDefault();
+    setSearchQuery(inputValue);
+  };
 
-    const {recordings} = await getMusic(query);
-
-    const results: Item[] = (recordings as Result[]).map((result: Result) => ({
-      id: result.id,
-      artist: result['artist-credit'][0].artist.name,
-      song: result.title,
-    }));
-
-    setSearchResults(results);
-  }
+  const results = data?.recordings.map((result: Result) => ({
+    id: result.id,
+    artist: result['artist-credit'][0].artist.name,
+    song: result.title,
+  }));
 
   return (
-    <>
-      <form onSubmit={searchSubmitHandle}>
-        <input
-          id="seach-music"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        ></input>
-        <button type="submit">Search</button>
-      </form>
-      <ResultList items={searchResults} />
-    </>
+    <SectionWrapper>
+      <StyledForm onSubmit={searchSubmitHandle}>
+        <InputGroup>
+          <StyledInput
+            id="music-search"
+            placeholder="Search for Metallica"
+            value={inputValue}
+            onChange={(event) => setInputValue(event.target.value)}
+          ></StyledInput>
+          <StyledSearchButton type="submit">Search</StyledSearchButton>
+        </InputGroup>
+      </StyledForm>
+      {isError && (
+        <StyledErrorBanner role="alert">
+          {error?.message?.toUpperCase() || 'UNEXPECTED ERROR OCCURRED'}
+        </StyledErrorBanner>
+      )}
+      {isLoading && <StyledLoading />}
+      {!isLoading && !isError && <ResultList items={results} />}
+    </SectionWrapper>
   );
-}
+};

@@ -1,8 +1,20 @@
-import {useState, useContext} from 'react';
+import {useState, useContext, useMemo} from 'react';
 import {FavouritesContext} from '../context/favourites-context';
 import {DispatchContext} from '../context/dispatch-context';
 import {type Action, type Item} from '../types';
-import '../styles/favourites.css';
+import {
+  InputGroup,
+  SectionWrapper,
+  StyledButton,
+  StyledForm,
+  StyledInput,
+  StyledListItem,
+  StyledParagraph,
+  StyledUnorderedList,
+  TruncatedText,
+} from '../styles/styled-components';
+
+// @TODO connect mongodb database to store favourites
 
 interface FavouritesListProps {
   items: Item[];
@@ -13,10 +25,9 @@ const FavouritesList = ({items}: FavouritesListProps) => {
 
   if (items.length === 0) {
     return (
-      <>
-        <h3>{'Music'}</h3>
-        <span>{'No music found'}</span>
-      </>
+      <SectionWrapper>
+        <StyledParagraph>{'No media found...'}</StyledParagraph>
+      </SectionWrapper>
     );
   }
 
@@ -30,55 +41,55 @@ const FavouritesList = ({items}: FavouritesListProps) => {
   }
 
   const favourites = items.map((item) => (
-    <li className="result" key={item.id}>
-      {`${item.artist} - ${item.song}`}
-      <button
+    <StyledListItem key={item.id}>
+      <TruncatedText>{`${item.artist} - ${item.song}`}</TruncatedText>
+      <StyledButton
         type="button"
         onClick={() => {
           handleRemove(item.id);
         }}
       >
         Remove
-      </button>
-    </li>
+      </StyledButton>
+    </StyledListItem>
   ));
 
-  return <ul className="search-results">{favourites}</ul>;
+  return <StyledUnorderedList>{favourites}</StyledUnorderedList>;
 };
 
 export function Favourites() {
   const [filter, setFilter] = useState<string>('');
   const favourites = useContext(FavouritesContext);
 
-  // add debounce
-  function handleFilter(query: string, items: Item[] | null) {
-    const REGEXP = new RegExp(query, 'i');
-    const filteredItems: Item[] = [];
+  // @TODO add debounce or submit button
+  const filteredItems = useMemo(() => {
+    if (!favourites) return [];
+    if (!filter.trim()) return favourites;
 
-    if (!items) {
-      return filteredItems;
-    }
+    const matcher = filter.toLowerCase();
 
-    for (const item of items) {
-      const result = REGEXP.test(item.artist) || REGEXP.test(item.song);
-      if (result === true) {
-        filteredItems.push(item);
-      }
-    }
+    return favourites.filter((item) => {
+      return (
+        item.artist.toLowerCase().includes(matcher) ||
+        item.song.toLowerCase().includes(matcher)
+      );
+    });
+  }, [favourites, filter]);
 
-    return filteredItems;
-  }
-
+  // @TODO add pagination
   return (
-    <>
-      <form>
-        <input
-          value={filter}
-          id="filter-favourites"
-          onChange={(event) => setFilter(event.target.value)}
-        ></input>
-      </form>
-      <FavouritesList items={handleFilter(filter, favourites)} />
-    </>
+    <SectionWrapper>
+      <StyledForm>
+        <InputGroup>
+          <StyledInput
+            value={filter}
+            id="filter-favourites"
+            placeholder="Nothing Else Matters"
+            onChange={(event) => setFilter(event.target.value)}
+          ></StyledInput>
+        </InputGroup>
+      </StyledForm>
+      <FavouritesList items={filteredItems} />
+    </SectionWrapper>
   );
 }
