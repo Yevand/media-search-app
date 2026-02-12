@@ -3,7 +3,7 @@ import {FavouritesContext} from '../context/favourites-context';
 import {DispatchContext} from '../context/dispatch-context';
 import {type Action, type Item} from '../types';
 import {
-  InputGroup,
+  InputWrapper,
   SectionWrapper,
   StyledButton,
   StyledForm,
@@ -78,14 +78,14 @@ export function Favourites() {
   return (
     <SectionWrapper>
       <StyledForm>
-        <InputGroup>
+        <InputWrapper>
           <StyledInput
             value={filter}
             id="filter-favourites"
             placeholder="Nothing Else Matters"
             onChange={(event) => setFilter(event.target.value)}
           ></StyledInput>
-        </InputGroup>
+        </InputWrapper>
       </StyledForm>
       <FavouritesList items={filteredItems} />
     </SectionWrapper>

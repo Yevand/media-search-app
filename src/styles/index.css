@@ -1,6 +1,6 @@
 :root {
   --min-mobile-width: 320px;
-  --button-fixed-width: 2rem;
+  --button-fixed-width: 4rem;
   --gap: 1rem;
 
   --grey: #B0C4DE;
@@ -13,4 +13,8 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }

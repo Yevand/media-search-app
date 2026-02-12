@@ -16,7 +16,7 @@ export const ApplicationWrapper = styled.div`
 export const PageWrapper = styled.main`
   display: flex;
   justify-content: center;
-  width: inherit;
+  width: 100%;
   margin-top: 5rem;
 `;
 
@@ -26,6 +26,7 @@ export const ContentWrapper = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 100%);
   justify-content: center;
+  gap: calc(var(--gap) * 2);
 
   ${desktop} {
     grid-template-columns: 45% 45%;
@@ -75,19 +76,20 @@ export const StyledParagraph = styled.p`
 export const StyledForm = styled.form`
   display: flex;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
   flex-direction: column;
   ${desktop} {
     flex-direction: row;
   }
 `;
 
-export const InputGroup = styled.div`
+export const InputWrapper = styled.div`
   display: flex;
   align-self: center;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   width: 100%;
+  height: 2.5rem;
   border: 2px solid var(--grey);
   border-radius: 20px;
   overflow: hidden;
@@ -103,29 +105,37 @@ export const StyledInput = styled.input`
   font-size: 1rem;
 `;
 
-export const StyledSearchButton = styled.button`
+export const StyledButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   border: none;
-  padding: 0.5rem 1.5rem;
+  border-radius: 0 20px 20px 0;
+  width: var(--button-fixed-width);
+  flex-shrink: 0;
   cursor: pointer;
   background-color: var(--grey-light);
 `;
 
-export const StyledButton = styled.button`
+export const StyledSearchButton = styled.button`
   display: flex;
   justify-content: center;
-  padding: 0.25rem 0.5rem;
+  align-items: center;
   border: none;
+  border-radius: 0 20px 20px 0;
+  height: 100%;
   width: var(--button-fixed-width);
-  flex-shrink: 0;
   cursor: pointer;
+  background-color: var(--grey-light);
 `;
 
 export const StyledUnorderedList = styled.ul`
+  list-style: none;
+  width: 90%;
   display: flex;
   flex-direction: column;
-  width: 100%;
   align-items: center;
-  list-style: none;
   padding: 0;
   margin: 0;
 `;
@@ -136,20 +146,17 @@ export const StyledListItem = styled.li`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem;
+  padding-top: 0.5rem;
   margin-bottom: 0.5rem;
   border-top: 0.5px solid var(--grey);
-  min-width: 0;
-  gap: 1rem;
+  gap: var(--gap);
 `;
 
 export const TruncatedText = styled.span`
-  flex: 1;
-  min-width: 0;
+  text-align: left;
+  text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
 `;
 
 export const StyledNavigationHeader = styled.header`

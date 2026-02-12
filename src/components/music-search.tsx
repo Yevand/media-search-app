@@ -3,7 +3,7 @@ import {DispatchContext} from '../context/dispatch-context';
 import {useQuery} from '@tanstack/react-query';
 import type {Action, Item, MusicSearchResponse, Result} from '../types';
 import {
-  InputGroup,
+  InputWrapper,
   SectionWrapper,
   StyledButton,
   StyledForm,
@@ -85,7 +85,7 @@ export const MusicSearch = () => {
   return (
     <SectionWrapper>
       <StyledForm onSubmit={searchSubmitHandle}>
-        <InputGroup>
+        <InputWrapper>
           <StyledInput
             id="music-search"
             placeholder="Search for Metallica"
@@ -93,7 +93,7 @@ export const MusicSearch = () => {
             onChange={(event) => setInputValue(event.target.value)}
           ></StyledInput>
           <StyledSearchButton type="submit">Search</StyledSearchButton>
-        </InputGroup>
+        </InputWrapper>
       </StyledForm>
       {isError && (
         <StyledErrorBanner role="alert">
