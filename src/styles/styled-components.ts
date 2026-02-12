@@ -9,29 +9,28 @@ export const ApplicationWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 auto;
-  font-family: sans-serif;
-  text-align: center;
+  justify-content: center;
+  margin: 0;
 `;
 
 export const PageWrapper = styled.main`
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  width: inherit;
   margin-top: 5rem;
 `;
 
 export const ContentWrapper = styled.div`
+  width: 90vw;
   margin-top: 5rem;
-  width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 100%);
   justify-content: center;
-  justify-items: center;
-  padding: 0 1rem;
 
   ${desktop} {
     grid-template-columns: 45% 45%;
     justify-content: space-between;
-    max-width: 1200px;
+    max-width: 1280px;
   }
 `;
 
@@ -40,8 +39,6 @@ export const SectionWrapper = styled.section`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: var(--max-content-width);
-  min-width: 0;
 
   h2 {
     margin-top: 0;
@@ -172,17 +169,16 @@ export const StyledNavigationHeader = styled.header`
 export const StyledNavigationList = styled.ul`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  width: auto;
-  min-width: var(--min-content-width);
-  max-width: var(--max-content-width);
-  gap: calc(var(--flex-gap) * 1);
+  justify-content: center;
   list-style-type: none;
-  padding: 0;
+  width: 100%;
+  padding: 0 10px;
+  gap: var(--gap);
+  margin: 0;
 `;
 
 export const StyledNavigationItem = styled.li<{selected: boolean}>`
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   border: ${(props) =>
     props.selected ? '1px solid var(--grey);' : '1px solid var(--grey);'};
   border-radius: 16px;
@@ -218,7 +214,6 @@ export const StyledErrorBanner = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: var(--max-content-width);
   margin: 1rem 0;
   padding: 0.75rem 1rem;
   background-color: #fff5f5;

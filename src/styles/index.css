@@ -1,13 +1,16 @@
 :root {
-  --max-content-width: 20rem;
-  --min-content-width: 10rem;
-  --button-fixed-width: 5rem;
-  --flex-gap: 1rem;
-
   --min-mobile-width: 320px;
+  --button-fixed-width: 2rem;
+  --gap: 1rem;
 
   --grey: #B0C4DE;
   --grey-light: #f3f3f3;
   --blue: #00BFFF;
   --base-color: #444;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
