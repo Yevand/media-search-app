@@ -14,8 +14,6 @@ import {
   TruncatedText,
 } from '../styles/styled-components';
 
-// @TODO connect mongodb database to store favourites
-
 interface FavouritesListProps {
   items: Item[];
 }

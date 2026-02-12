@@ -1,5 +1,5 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import {useReducer} from 'react';
+import {useEffect, useReducer} from 'react';
 import {FavouritesContext} from './context/favourites-context';
 import {DispatchContext} from './context/dispatch-context';
 import {NavigationBar} from './components/navigation-bar';
@@ -43,7 +43,23 @@ const queryClient = new QueryClient();
 
 // @TODO add aria-label for all interactive elements and important content
 export function App() {
-  const [favourites, dispatch] = useReducer(favouritesListReducer, []);
+  let initialState = [];
+
+  const savedFavourites = localStorage.getItem('favourites');
+
+  if (savedFavourites) {
+    initialState = JSON.parse(savedFavourites);
+  }
+
+  const [favourites, dispatch] = useReducer(
+    favouritesListReducer,
+    initialState,
+  );
+
+  useEffect(() => {
+    const userData = JSON.stringify(favourites);
+    localStorage.setItem('favourites', userData);
+  }, [favourites]);
 
   return (
     <ApplicationWrapper>
