@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "tsc -b && vite build",
-    "watch": "tsc -b && vite build --watch",
+    "build": "vite build",
+    "watch": "vite build --watch",
     "lint": "eslint .",
     "compile": "tsc --noEmit --pretty",
     "check": "pnpm lint && pnpm compile"

@@ -57,6 +57,7 @@ export const StyledAside = styled.aside`
   width: 100%;
 
   h3 {
+    text-align: center;
     margin-top: 0;
     padding: 0;
     color: var(--blue);
@@ -64,6 +65,7 @@ export const StyledAside = styled.aside`
   }
 
   p {
+    text-align: center;
     color: var(--base-color);
   }
 `;

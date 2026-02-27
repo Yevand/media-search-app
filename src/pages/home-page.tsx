@@ -15,11 +15,10 @@ export function Home() {
             <h3>Your digital media collection</h3>
             <p>
               Use the search bar to explore millions of tracks and cinematic
-              masterpieces.
+              masterpieces
             </p>
           </StyledAside>
         </SectionWrapper>
-
         <Favourites />
       </ContentWrapper>
     </PageWrapper>

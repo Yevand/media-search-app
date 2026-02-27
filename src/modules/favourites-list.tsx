@@ -1,7 +1,6 @@
 import {useState, useContext, useMemo} from 'react';
 import {FavouritesContext} from '../context/favourites-context';
 import type {Item} from '../types';
-// import {type Action, type Item} from '../types';
 import {
   InputWrapper,
   SectionWrapper,
