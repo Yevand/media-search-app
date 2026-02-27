@@ -1,5 +1,5 @@
-import {MusicSearch} from '../components/music-search';
-import {Favourites} from '../components/favourites-list';
+import {MusicSearch} from '../modules/music-search';
+import {Favourites} from '../modules/favourites-list';
 import {PageWrapper, ContentWrapper} from '../styles/styled-components';
 
 export function Music() {

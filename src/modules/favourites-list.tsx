@@ -1,7 +1,7 @@
 import {useState, useContext, useMemo} from 'react';
 import {FavouritesContext} from '../context/favourites-context';
-import {DispatchContext} from '../context/dispatch-context';
-import {type Action, type Item} from '../types';
+import type {Item} from '../types';
+// import {type Action, type Item} from '../types';
 import {
   InputWrapper,
   SectionWrapper,
@@ -15,13 +15,29 @@ import {
 } from '../styles/styled-components';
 
 interface FavouritesListProps {
-  items: Item[];
+  filter: string;
 }
 
-const FavouritesList = ({items}: FavouritesListProps) => {
-  const dispatch = useContext(DispatchContext);
+const EMPTY_ITEMS: Item[] = [];
 
-  if (items.length === 0) {
+const FavouritesList = ({filter}: FavouritesListProps) => {
+  const mediaContext = useContext(FavouritesContext);
+  const items = mediaContext?.favourites ?? EMPTY_ITEMS;
+
+  const filteredItems = useMemo(() => {
+    if (!filter.trim()) return items;
+
+    const matcher = filter.toLowerCase();
+
+    return items.filter((item) => {
+      return (
+        item.name.toLowerCase().includes(matcher) ||
+        item.title.toLowerCase().includes(matcher)
+      );
+    });
+  }, [items, filter]);
+
+  if (items?.length === 0) {
     return (
       <SectionWrapper>
         <StyledParagraph>{'No media found...'}</StyledParagraph>
@@ -29,18 +45,19 @@ const FavouritesList = ({items}: FavouritesListProps) => {
     );
   }
 
-  function handleRemove(id: Action['id']) {
-    if (dispatch) {
-      dispatch({
-        id: id,
-        type: 'removed',
-      });
+  function handleRemove(id: string) {
+    if (!mediaContext) {
+      return;
     }
+
+    mediaContext.setFavourites((currentFavourites) =>
+      currentFavourites.filter(({id: itemId}) => itemId !== id),
+    );
   }
 
-  const favourites = items.map((item) => (
+  const favourites = filteredItems?.map((item) => (
     <StyledListItem key={item.id}>
-      <TruncatedText>{`${item.artist} - ${item.song}`}</TruncatedText>
+      <TruncatedText>{`${item.name} - ${item.title}`}</TruncatedText>
       <StyledButton
         type="button"
         onClick={() => {
@@ -57,23 +74,7 @@ const FavouritesList = ({items}: FavouritesListProps) => {
 
 export function Favourites() {
   const [filter, setFilter] = useState<string>('');
-  const favourites = useContext(FavouritesContext);
-
   // @TODO add debounce or submit button
-  const filteredItems = useMemo(() => {
-    if (!favourites) return [];
-    if (!filter.trim()) return favourites;
-
-    const matcher = filter.toLowerCase();
-
-    return favourites.filter((item) => {
-      return (
-        item.artist.toLowerCase().includes(matcher) ||
-        item.song.toLowerCase().includes(matcher)
-      );
-    });
-  }, [favourites, filter]);
-
   // @TODO add pagination
   return (
     <SectionWrapper>
@@ -87,7 +88,7 @@ export function Favourites() {
           ></StyledInput>
         </InputWrapper>
       </StyledForm>
-      <FavouritesList items={filteredItems} />
+      <FavouritesList filter={filter} />
     </SectionWrapper>
   );
 }

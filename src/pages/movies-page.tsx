@@ -1,4 +1,4 @@
-import {Favourites} from '../components/favourites-list';
+import {Favourites} from '../modules/favourites-list';
 import {
   PageWrapper,
   ContentWrapper,

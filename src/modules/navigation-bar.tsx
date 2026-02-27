@@ -12,7 +12,7 @@ const links = [
   {path: '/movies', name: 'movies'},
 ];
 
-// @TODO navbar should be sticky
+// @TODO navbar should be sticky and destruct link
 export const NavigationBar = () => {
   const location = useLocation();
 
@@ -20,7 +20,10 @@ export const NavigationBar = () => {
     <StyledNavigationHeader>
       <StyledNavigationList>
         {links.map((link) => (
-          <StyledNavigationItem selected={link.path === location.pathname}>
+          <StyledNavigationItem
+            key={link.name}
+            selected={link.path === location.pathname}
+          >
             <StyledLink
               id={link.name}
               to={link.path}
