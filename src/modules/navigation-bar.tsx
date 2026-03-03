@@ -12,21 +12,23 @@ const links = [
   {path: '/movies', name: 'movies'},
 ];
 
-// @TODO navbar should be sticky
 export const NavigationBar = () => {
   const location = useLocation();
 
   return (
     <StyledNavigationHeader>
       <StyledNavigationList>
-        {links.map((link) => (
-          <StyledNavigationItem selected={link.path === location.pathname}>
+        {links.map(({name, path}) => (
+          <StyledNavigationItem
+            key={name}
+            selected={path === location.pathname}
+          >
             <StyledLink
-              id={link.name}
-              to={link.path}
-              selected={link.path === location.pathname}
+              id={name}
+              to={path}
+              selected={path === location.pathname}
             >
-              {link.name}
+              {name}
             </StyledLink>
           </StyledNavigationItem>
         ))}

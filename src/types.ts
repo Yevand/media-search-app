@@ -1,7 +1,7 @@
 export interface Item {
   id: string;
-  artist: string;
-  song: string;
+  name: string;
+  title: string;
 }
 
 export interface Action {

@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "tsc -b && vite build",
-    "watch": "tsc -b && vite build --watch",
-    "check": "eslint ."
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "lint": "eslint .",
+    "compile": "tsc --noEmit --pretty",
+    "check": "pnpm lint && pnpm compile"
   },
   "resolutions": {
     "styled-components": "^6"
@@ -32,5 +34,6 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.32.1",
     "vite": "^6.3.5"
-  }
+  },
+  "packageManager": "pnpm@10.30.3+sha512.c961d1e0a2d8e354ecaa5166b822516668b7f44cb5bd95122d590dd81922f606f5473b6d23ec4a5be05e7fcd18e8488d47d978bbe981872f1145d06e9a740017"
 }

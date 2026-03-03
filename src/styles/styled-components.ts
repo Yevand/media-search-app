@@ -9,29 +9,29 @@ export const ApplicationWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 auto;
-  font-family: sans-serif;
-  text-align: center;
+  justify-content: center;
+  margin: 0;
 `;
 
 export const PageWrapper = styled.main`
+  display: flex;
+  justify-content: center;
   width: 100%;
   margin-top: 5rem;
 `;
 
 export const ContentWrapper = styled.div`
+  width: 90vw;
   margin-top: 5rem;
-  width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 100%);
   justify-content: center;
-  justify-items: center;
-  padding: 0 1rem;
+  gap: calc(var(--gap) * 2);
 
   ${desktop} {
     grid-template-columns: 45% 45%;
     justify-content: space-between;
-    max-width: 1200px;
+    max-width: 1280px;
   }
 `;
 
@@ -40,8 +40,6 @@ export const SectionWrapper = styled.section`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: var(--max-content-width);
-  min-width: 0;
 
   h2 {
     margin-top: 0;
@@ -59,6 +57,7 @@ export const StyledAside = styled.aside`
   width: 100%;
 
   h3 {
+    text-align: center;
     margin-top: 0;
     padding: 0;
     color: var(--blue);
@@ -66,6 +65,7 @@ export const StyledAside = styled.aside`
   }
 
   p {
+    text-align: center;
     color: var(--base-color);
   }
 `;
@@ -78,19 +78,20 @@ export const StyledParagraph = styled.p`
 export const StyledForm = styled.form`
   display: flex;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
   flex-direction: column;
   ${desktop} {
     flex-direction: row;
   }
 `;
 
-export const InputGroup = styled.div`
+export const InputWrapper = styled.div`
   display: flex;
   align-self: center;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   width: 100%;
+  height: 2.5rem;
   border: 2px solid var(--grey);
   border-radius: 20px;
   overflow: hidden;
@@ -106,29 +107,37 @@ export const StyledInput = styled.input`
   font-size: 1rem;
 `;
 
-export const StyledSearchButton = styled.button`
+export const StyledButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   border: none;
-  padding: 0.5rem 1.5rem;
+  border-radius: 0 20px 20px 0;
+  width: var(--button-fixed-width);
+  flex-shrink: 0;
   cursor: pointer;
   background-color: var(--grey-light);
 `;
 
-export const StyledButton = styled.button`
+export const StyledSearchButton = styled.button`
   display: flex;
   justify-content: center;
-  padding: 0.25rem 0.5rem;
+  align-items: center;
   border: none;
+  border-radius: 0 20px 20px 0;
+  height: 100%;
   width: var(--button-fixed-width);
-  flex-shrink: 0;
   cursor: pointer;
+  background-color: var(--grey-light);
 `;
 
 export const StyledUnorderedList = styled.ul`
+  list-style: none;
+  width: 90%;
   display: flex;
   flex-direction: column;
-  width: 100%;
   align-items: center;
-  list-style: none;
   padding: 0;
   margin: 0;
 `;
@@ -139,20 +148,17 @@ export const StyledListItem = styled.li`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem;
+  padding-top: 0.5rem;
   margin-bottom: 0.5rem;
   border-top: 0.5px solid var(--grey);
-  min-width: 0;
-  gap: 1rem;
+  gap: var(--gap);
 `;
 
 export const TruncatedText = styled.span`
-  flex: 1;
-  min-width: 0;
+  text-align: left;
+  text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
 `;
 
 export const StyledNavigationHeader = styled.header`
@@ -172,17 +178,16 @@ export const StyledNavigationHeader = styled.header`
 export const StyledNavigationList = styled.ul`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  width: auto;
-  min-width: var(--min-content-width);
-  max-width: var(--max-content-width);
-  gap: calc(var(--flex-gap) * 1);
+  justify-content: center;
   list-style-type: none;
-  padding: 0;
+  width: 100%;
+  padding: 0 10px;
+  gap: var(--gap);
+  margin: 0;
 `;
 
 export const StyledNavigationItem = styled.li<{selected: boolean}>`
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   border: ${(props) =>
     props.selected ? '1px solid var(--grey);' : '1px solid var(--grey);'};
   border-radius: 16px;
@@ -218,7 +223,6 @@ export const StyledErrorBanner = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: var(--max-content-width);
   margin: 1rem 0;
   padding: 0.75rem 1rem;
   background-color: #fff5f5;
