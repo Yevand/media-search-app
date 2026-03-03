@@ -1,5 +1,5 @@
-import {useState, useContext, useMemo} from 'react';
-import {FavouritesContext} from '../context/favourites-context';
+import {useState, useMemo, useEffect} from 'react';
+import {useFavouritesContext} from '../context/favourites-context';
 import type {Item} from '../types';
 import {
   InputWrapper,
@@ -20,18 +20,22 @@ interface FavouritesListProps {
 const EMPTY_ITEMS: Item[] = [];
 
 const FavouritesList = ({filter}: FavouritesListProps) => {
-  const mediaContext = useContext(FavouritesContext);
+  const mediaContext = useFavouritesContext();
   const items = mediaContext?.favourites ?? EMPTY_ITEMS;
 
   const filteredItems = useMemo(() => {
     if (!filter.trim()) return items;
 
-    const matcher = filter.toLowerCase();
+    const matchers = filter.toLowerCase().split(' ');
 
-    return items.filter((item) => {
-      return (
-        item.name.toLowerCase().includes(matcher) ||
-        item.title.toLowerCase().includes(matcher)
+    return items.filter(({name, title}) => {
+      const combined = `${name.toLowerCase()} - ${title.toLowerCase()}`;
+
+      return matchers.every(
+        (matcher) =>
+          name.toLowerCase().includes(matcher) ||
+          title.toLowerCase().includes(matcher) ||
+          combined.includes(matcher),
       );
     });
   }, [items, filter]);
@@ -45,45 +49,57 @@ const FavouritesList = ({filter}: FavouritesListProps) => {
   }
 
   function handleRemove(id: string) {
-    if (!mediaContext) {
-      return;
-    }
-
     mediaContext.setFavourites((currentFavourites) =>
       currentFavourites.filter(({id: itemId}) => itemId !== id),
     );
   }
 
-  const favourites = filteredItems?.map((item) => (
-    <StyledListItem key={item.id}>
-      <TruncatedText>{`${item.name} - ${item.title}`}</TruncatedText>
-      <StyledButton
-        type="button"
-        onClick={() => {
-          handleRemove(item.id);
-        }}
-      >
-        Remove
-      </StyledButton>
-    </StyledListItem>
-  ));
+  const favourites = filteredItems?.map(({id, name, title}) => {
+    const result = `${name} - ${title}`;
+
+    return (
+      <StyledListItem key={id}>
+        <TruncatedText>{result}</TruncatedText>
+        <StyledButton
+          type="button"
+          onClick={() => {
+            handleRemove(id);
+          }}
+        >
+          Remove
+        </StyledButton>
+      </StyledListItem>
+    );
+  });
 
   return <StyledUnorderedList>{favourites}</StyledUnorderedList>;
 };
 
 export function Favourites() {
   const [filter, setFilter] = useState<string>('');
-  // @TODO add debounce or submit button
-  // @TODO add pagination
+  const [query, setQuery] = useState<string>('');
+
+  useEffect(() => {
+    const trigger = setTimeout(() => setFilter(query), 500);
+    return () => clearTimeout(trigger);
+  }, [query]);
+
   return (
     <SectionWrapper>
       <StyledForm>
         <InputWrapper>
           <StyledInput
-            value={filter}
+            value={query}
             id="filter-favourites"
             placeholder="Nothing Else Matters"
-            onChange={(event) => setFilter(event.target.value)}
+            onChange={(event) => {
+              setQuery(event.target.value);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+              }
+            }}
           ></StyledInput>
         </InputWrapper>
       </StyledForm>

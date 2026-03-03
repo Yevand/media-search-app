@@ -1,5 +1,5 @@
-import {useContext, useMemo, useState, type SubmitEvent} from 'react';
-import {FavouritesContext} from '../context/favourites-context';
+import {useMemo, useState, type SubmitEvent} from 'react';
+import {useFavouritesContext} from '../context/favourites-context';
 import {useQuery} from '@tanstack/react-query';
 import type {Item, MusicSearchResponse, Result} from '../types';
 import {
@@ -17,11 +17,14 @@ import {
   StyledAside,
 } from '../styles/styled-components';
 
-const getMedia = async (options: {
-  query: string;
-  limit?: string;
-  fmt?: string;
-}): Promise<MusicSearchResponse | undefined> => {
+const getMedia = async (
+  options: {
+    query: string;
+    limit?: string;
+    fmt?: string;
+  },
+  setErrorMessage: (error: string) => void,
+): Promise<MusicSearchResponse | undefined> => {
   const {fmt = 'json', limit = '5', query} = options;
   const requestUrl = new URL('https://musicbrainz.org/ws/2/recording');
   if (query) requestUrl.searchParams.set('query', query);
@@ -32,7 +35,12 @@ const getMedia = async (options: {
     const response = await fetch(requestUrl);
     return response.json();
   } catch (error) {
-    console.error(`Search failed, message: ${error}`);
+    if (typeof error === 'string') {
+      setErrorMessage(error);
+      console.error(`Search failed, message: ${error}`);
+    } else {
+      console.error(`Search failed, message: ${error}`);
+    }
   }
 };
 
@@ -41,13 +49,9 @@ interface ResultListProps {
 }
 
 const ResultList = ({items}: ResultListProps) => {
-  const mediaContext = useContext(FavouritesContext);
+  const mediaContext = useFavouritesContext();
 
   function handleAdd(item: Item) {
-    if (!mediaContext) {
-      return;
-    }
-
     mediaContext.setFavourites((currentFavourites) => {
       const isDuplicate = currentFavourites.some(
         ({id: itemId}) => itemId === item.id,
@@ -61,30 +65,40 @@ const ResultList = ({items}: ResultListProps) => {
     });
   }
 
-  // @TODO add truncation for long text in li
-  const listItems = items.map((item) => (
-    <StyledListItem key={item.id}>
-      <TruncatedText>{`${item.name} - ${item.title}`}</TruncatedText>
-      <StyledButton type="button" onClick={() => handleAdd(item)}>
-        Add
-      </StyledButton>
-    </StyledListItem>
-  ));
+  const listItems = items.map(({id, name, title}) => {
+    const result = `${name} - ${title}`;
+    return (
+      <StyledListItem key={id}>
+        <TruncatedText>{result}</TruncatedText>
+        <StyledButton
+          type="button"
+          onClick={() => handleAdd({id, name, title})}
+        >
+          Add
+        </StyledButton>
+      </StyledListItem>
+    );
+  });
 
   return <StyledUnorderedList>{listItems}</StyledUnorderedList>;
 };
 
 export const MusicSearch = () => {
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [inputValue, setInputValue] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const {data, isLoading, isError, error} = useQuery({
     queryKey: ['music', searchQuery],
-    queryFn: async () => await getMedia({query: searchQuery}),
+    queryFn: async () => await getMedia({query: searchQuery}, setErrorMessage),
     enabled: !!searchQuery,
   });
 
   const searchResults: Item[] | undefined = useMemo(() => {
+    if (!data?.recordings[0]) {
+      return undefined;
+    }
+
     return data?.recordings.map((result: Result) => {
       const {
         id,
@@ -117,32 +131,29 @@ export const MusicSearch = () => {
             id="music-search"
             placeholder="Search for Metallica"
             value={inputValue}
-            onChange={(event) => setInputValue(event.target.value)}
+            onChange={(event) => {
+              setInputValue(event.target.value);
+            }}
           />
           <StyledSearchButton type="submit">Search</StyledSearchButton>
         </InputWrapper>
       </StyledForm>
-      {(() => {
-        switch (true) {
-          case isError:
-            return (
-              <StyledErrorBanner role="alert">
-                {error?.message ||
-                  'Unexpected error occurred while searching for music...'}
-              </StyledErrorBanner>
-            );
-          case isLoading:
-            return <StyledLoading />;
-          case searchResults && !isLoading && !isError:
-            return <ResultList items={searchResults} />;
-          default:
-            return (
-              <StyledAside>
-                <p>Here you can search for your favoiurite songs and artists</p>
-              </StyledAside>
-            );
-        }
-      })()}
+      {!searchQuery && (
+        <StyledAside>
+          <p>Here you can search for your favoiurite songs and artists</p>
+        </StyledAside>
+      )}
+      {isLoading && <StyledLoading />}
+      {isError && (
+        <StyledErrorBanner role="alert">
+          {(error?.message && errorMessage) ||
+            'Unexpected error occurred while searching!'}
+        </StyledErrorBanner>
+      )}
+      {!isLoading && !isError && !searchResults && searchQuery && (
+        <StyledErrorBanner role="alert">{'No results!'}</StyledErrorBanner>
+      )}
+      {searchResults && <ResultList items={searchResults} />}
     </SectionWrapper>
   );
 };

@@ -1,3 +1,4 @@
+import {FavContextProvider} from '../context/favourites-context';
 import {Favourites} from '../modules/favourites-list';
 import {
   SectionWrapper,
@@ -9,18 +10,22 @@ import {
 export function Home() {
   return (
     <PageWrapper>
-      <ContentWrapper>
-        <SectionWrapper>
-          <StyledAside>
-            <h3>Your digital media collection</h3>
-            <p>
-              Use the search bar to explore millions of tracks and cinematic
-              masterpieces
-            </p>
-          </StyledAside>
-        </SectionWrapper>
-        <Favourites />
-      </ContentWrapper>
+      <FavContextProvider
+        children={
+          <ContentWrapper>
+            <SectionWrapper>
+              <StyledAside>
+                <h3>Your digital media collection</h3>
+                <p>
+                  Use the search bar to explore millions of tracks and cinematic
+                  masterpieces
+                </p>
+              </StyledAside>
+            </SectionWrapper>
+            <Favourites />
+          </ContentWrapper>
+        }
+      />
     </PageWrapper>
   );
 }
