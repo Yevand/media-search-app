@@ -31,3 +31,110 @@ CREATE TABLE Albums (
 
 );
 
+CREATE TABLE Genres (
+    Id INT NOT NULL,
+    CONSTRAINT PK_Genres PRIMARY KEY (Id),
+    Name VARCHAR(100) NOT NULL,
+    CONSTRAINT UQ_Genres_Name UNIQUE (Name),
+    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP NOT NULL
+);
+
+CREATE TABLE Songs (
+    Id INT NOT NULL,
+    CONSTRAINT PK_Songs PRIMARY KEY (Id),
+    Title VARCHAR(150) NOT NULL,
+    ArtistId INT NOT NULL,
+    AlbumId INT,
+
+    CONSTRAINT FK_Songs_ArtistId
+        FOREIGN KEY (ArtistId) 
+        REFERENCES Artists(Id),
+
+    CONSTRAINT FK_Songs_AlbumId
+        FOREIGN KEY (AlbumId) 
+        REFERENCES Albums(Id),
+
+    ReleaseDate DATE,
+    Rating NUMERIC(2,1) DEFAULT 0.0,
+
+    CONSTRAINT CK_Songs_Rating 
+        CHECK (Rating >= 0.0 AND Rating <=5.0),
+
+    Duration INT NOT NULL,
+    PlayCount BIGINT NOT NULL DEFAULT 0,
+    ExternalSource VARCHAR(50),
+    ExternalId VARCHAR(255),
+    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP NOT NULL
+);
+
+CREATE TABLE SongGenres (
+    SongId INT NOT NULL,
+    GenreId INT NOT NULL,
+
+    CONSTRAINT PK_SongGenres
+        PRIMARY KEY (SongId, GenreId),
+
+    CONSTRAINT FK_SongGenres_SongId
+        FOREIGN KEY (SongId)
+        REFERENCES Songs(Id),
+
+    CONSTRAINT FK_SongGenres_GenreId
+        FOREIGN KEY (GenreId)
+        REFERENCES Genres(Id),
+
+
+    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP NOT NULL
+);
+
+CREATE TABLE Users (
+    Id INT NOT NULL,
+    CONSTRAINT PK_Users PRIMARY KEY (Id),
+    Username VARCHAR(100) NOT NULL,
+    CONSTRAINT UQ_Users_Username UNIQUE (Username),
+    Email VARCHAR(150) NOT NULL,
+    CONSTRAINT UQ_Users_Email UNIQUE (Email),
+    ImageUrl VARCHAR(500),
+    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP NOT NULL
+);
+
+CREATE TABLE Playlists (
+    Id INT NOT NULL,
+    CONSTRAINT PK_Playlists PRIMARY KEY (Id),
+    UserId INT NOT NULL,
+
+    CONSTRAINT FK_Playlists_UserId
+        FOREIGN KEY (UserId)
+        REFERENCES Users(Id),
+    
+    Title VARCHAR(150) NOT NULL,
+    Description text,
+    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP NOT NULL
+);
+
+CREATE TABLE PlaylistSongs(
+    PlaylistId INT NOT NULL,
+    SongId INT NOT NULL,
+
+    CONSTRAINT PK_PlaylistSongs
+        PRIMARY KEY (PlaylistId, SongId),
+
+    CONSTRAINT FK_PlaylistSongs_PlaylistId
+        FOREIGN KEY (PlaylistId)
+        REFERENCES Playlists(Id),
+
+    CONSTRAINT FK_PlaylistSongs_SongId
+        FOREIGN KEY (SongId)
+        REFERENCES Songs(Id),
+
+    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP NOT NULL
+
+);
+
+
+
